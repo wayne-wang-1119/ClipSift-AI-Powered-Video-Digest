@@ -40,5 +40,5 @@ def download_videos(video_urls):
 
 if __name__ == "__main__":
     keywords = "Python lists"
-    video_urls = search_videos(keywords, 1)
+    video_urls = search_videos(keywords, 2)
     download_videos(video_urls)
