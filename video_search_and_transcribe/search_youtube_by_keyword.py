@@ -8,7 +8,7 @@ youtube_api_key = os.getenv("YOUTUBE_API_KEY")
 youtube = build("youtube", "v3", developerKey=youtube_api_key)
 
 
-def search_videos(keywords, max_results=5):
+def search_videos(keywords, max_results):
     search_response = (
         youtube.search()
         .list(q=keywords, part="id,snippet", maxResults=max_results, type="video")
@@ -33,11 +33,11 @@ def download_videos(video_urls):
             .desc()
             .first()
         )
-        stream.download()
+        stream.download(output_path="youtube_downloads")
         print(f"Downloaded {url}")
 
 
 if __name__ == "__main__":
     keywords = "Python lists"
-    video_urls = search_videos(keywords)
+    video_urls = search_videos(keywords, 1)
     download_videos(video_urls)
