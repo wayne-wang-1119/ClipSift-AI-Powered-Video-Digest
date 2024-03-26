@@ -4,3 +4,4 @@ python-dotenv
 ffmpeg-python
 openai
 google-api-python-client
+youtube-transcript-api

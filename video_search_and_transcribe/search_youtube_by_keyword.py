@@ -15,9 +15,10 @@ def search_videos(keywords, max_results):
         .execute()
     )
 
-    videos = []
+    videos = {}
     for search_result in search_response.get("items", []):
-        videos.append(
+        videoId = search_result["id"]["videoId"]
+        videos[videoId] = (
             f"https://www.youtube.com/watch?v={search_result['id']['videoId']}"
         )
 
@@ -25,7 +26,7 @@ def search_videos(keywords, max_results):
 
 
 def download_videos(video_urls):
-    for url in video_urls:
+    for id, url in video_urls.items():
         yt = pytube.YouTube(url)
         stream = (
             yt.streams.filter(progressive=True, file_extension="mp4")
@@ -33,8 +34,8 @@ def download_videos(video_urls):
             .desc()
             .first()
         )
-        stream.download(output_path="youtube_downloads")
-        print(f"Downloaded {url}")
+        stream.download(output_path=f"youtube_downloads/{id}")
+        print(f"Downloaded {id}")
 
 
 if __name__ == "__main__":
