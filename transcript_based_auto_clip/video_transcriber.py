@@ -2,7 +2,7 @@ import os
 import json
 from youtube_transcript_api import YouTubeTranscriptApi
 
-video_base_path = "../youtube_videos"
+video_base_path = "transcript_based_auto_clip/youtube_downloads"
 
 for video_id in os.listdir(video_base_path):
     video_path = os.path.join(video_base_path, video_id)
