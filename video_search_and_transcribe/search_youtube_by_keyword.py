@@ -38,8 +38,6 @@ def download_videos(video_urls):
 
 
 if __name__ == "__main__":
-    keywords = (
-        "Python lists"  # This would be the output from your GPT-3 generated keywords
-    )
+    keywords = "Python lists"
     video_urls = search_videos(keywords)
     download_videos(video_urls)
