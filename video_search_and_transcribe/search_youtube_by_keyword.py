@@ -34,7 +34,9 @@ def download_videos(video_urls):
             .desc()
             .first()
         )
-        stream.download(output_path=f"youtube_downloads/{id}")
+        stream.download(
+            output_path=f"transcript_based_auto_clip/youtube_downloads/{id}"
+        )
         print(f"Downloaded {id}")
 
 
