@@ -2,3 +2,4 @@ pytube
 youtube-transcript-api
 python-dotenv
 ffmpeg-python
+openai
