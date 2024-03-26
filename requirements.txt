@@ -3,3 +3,4 @@ youtube-transcript-api
 python-dotenv
 ffmpeg-python
 openai
+google-api-python-client
