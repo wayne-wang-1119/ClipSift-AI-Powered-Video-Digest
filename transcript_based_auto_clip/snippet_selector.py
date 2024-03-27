@@ -14,9 +14,25 @@ client = weaviate.Client(
     url="http://localhost:8080", additional_headers={"X-OpenAI-Api-Key": openai.api_key}
 )
 
+
+def create_schema_if_not_exists(client, schema):
+    existing_classes = client.schema.get()["classes"]
+    existing_class_names = {cls["class"] for cls in existing_classes}
+
+    for cls in schema["classes"]:
+        class_name = cls["class"]
+        if class_name in existing_class_names:
+            print(f"Class '{class_name}' already exists, deleting.")
+            print(f"Deleting existing class '{class_name}'.")
+            client.schema.delete_class(class_name)
+        client.schema.create_class(cls)
+        print(f"Class '{class_name}' created.")
+
+
 with open("transcript_based_auto_clip/data_schema/schema.json", "r") as schema_file:
     schema = json.load(schema_file)
-    client.schema.create(schema)
+
+create_schema_if_not_exists(client, schema)
 
 
 def index_video_transcripts(base_path="transcript_based_auto_clip/youtube_downloads"):
