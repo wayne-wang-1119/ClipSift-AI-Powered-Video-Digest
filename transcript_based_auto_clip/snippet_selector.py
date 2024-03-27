@@ -14,12 +14,12 @@ client = weaviate.Client(
     url="http://localhost:8080", additional_headers={"X-OpenAI-Api-Key": openai.api_key}
 )
 
-with open("data_schema/schema.json", "r") as schema_file:
+with open("transcript_based_auto_clip/data_schema/schema.json", "r") as schema_file:
     schema = json.load(schema_file)
     client.schema.create(schema)
 
 
-def index_video_transcripts(base_path="./youtube_downloads"):
+def index_video_transcripts(base_path="transcript_based_auto_clip/youtube_downloads"):
     for video_id in os.listdir(base_path):
         video_path = os.path.join(base_path, video_id)
         if os.path.isdir(video_path):
@@ -65,7 +65,9 @@ def find_best_k_contents(search_query, k=2):
     return best_transcripts
 
 
-def automate_snippet_generation(search_query, k, base_path="./youtube_downloads"):
+def automate_snippet_generation(
+    search_query, k, base_path="transcript_based_auto_clip/youtube_downloads"
+):
     client = weaviate.Client("http://localhost:8080")
     index_video_transcripts(base_path)
     best_transcripts = find_best_k_contents(search_query, k, client)

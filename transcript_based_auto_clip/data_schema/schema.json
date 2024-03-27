@@ -1,24 +1,28 @@
 {
-  "class": "TranscriptSegment",
-  "description": "A segment of a video transcript",
-  "properties": [
+  "classes": [
     {
-      "name": "text",
-      "dataType": ["text"],
-      "indexInverted": true
-    },
-    {
-      "name": "videoId",
-      "dataType": ["string"],
-      "indexInverted": true
-    },
-    {
-      "name": "start",
-      "dataType": ["number"]
-    },
-    {
-      "name": "duration",
-      "dataType": ["number"]
+      "class": "TranscriptSegment",
+      "description": "A segment of a video transcript",
+      "properties": [
+        {
+          "name": "text",
+          "dataType": ["text"],
+          "indexInverted": true
+        },
+        {
+          "name": "videoId",
+          "dataType": ["string"],
+          "indexInverted": true
+        },
+        {
+          "name": "start",
+          "dataType": ["number"]
+        },
+        {
+          "name": "duration",
+          "dataType": ["number"]
+        }
+      ]
     }
   ]
 }
