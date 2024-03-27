@@ -150,7 +150,9 @@ def automate_snippet_generation(
         start_time = transcript["start"]
         end_time = transcript["end"]
         video_path = os.path.join(base_path, video_id, f"{video_id}.mp4")
-        output_path = os.path.join(output_folder, f"{video_id}_snippet.mp4")
+        output_path = os.path.join(
+            output_folder, f"{video_id}_{start_time}_{end_time}.mp4"
+        )
 
         # Construct the FFmpeg command
         ffmpeg_command = [

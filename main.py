@@ -10,9 +10,13 @@ video_base_path = "transcript_based_auto_clip/youtube_downloads"
 keywords = ingest_prompt.generate_keywords(prompt, "gpt-3.5-turbo")
 print(keywords)
 
-video_urls = search_youtube_by_keyword.search_videos(keywords, 3)
+video_urls = search_youtube_by_keyword.search_videos(
+    keywords, 3
+)  # top 3 video selected
 print(video_urls)
 
-video_transcriber.download_transcript(video_base_path)
+video_transcriber.download_transcript(video_base_path)  # download transcript
 
-snippet_selector.automate_snippet_generation(search_query=keywords, k=3)
+snippet_selector.automate_snippet_generation(
+    search_query=keywords, k=3
+)  # top 3 snippet used to generate clips
