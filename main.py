@@ -14,6 +14,8 @@ video_urls = search_youtube_by_keyword.search_videos(
 )  # top 3 video selected
 print(video_urls)
 
+search_youtube_by_keyword.download_videos(video_urls)  # download video
+
 video_transcriber.download_transcript(video_base_path)  # download transcript
 
 snippet_selector.automate_snippet_generation(

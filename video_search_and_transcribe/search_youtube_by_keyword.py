@@ -27,6 +27,7 @@ def search_videos(keywords, max_results):
 
 def download_videos(video_urls):
     for id, url in video_urls.items():
+        print(f"Starting download for: {url}")
         yt = pytube.YouTube(url)
         stream = (
             yt.streams.filter(progressive=True, file_extension="mp4")
@@ -34,8 +35,11 @@ def download_videos(video_urls):
             .desc()
             .first()
         )
-        stream.download(
-            filename=f"{id}.mp4",
-            output_path=f"transcript_based_auto_clip/youtube_downloads/{id}",
-        )
-        print(f"Downloaded {id}")
+        if stream:
+            stream.download(
+                filename=f"{id}.mp4",
+                output_path=f"transcript_based_auto_clip/youtube_downloads/{id}",
+            )
+            print(f"Downloaded {id}")
+        else:
+            print(f"No suitable stream found for {id}")
