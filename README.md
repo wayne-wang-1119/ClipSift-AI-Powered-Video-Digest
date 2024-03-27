@@ -18,6 +18,15 @@ docker compose up -d
 Additionally, you need YOUTUBE_API_KEY. You can obtain one from Google's Cloud platform for free and create a project for free.
 You can follow the linked here to do so: [How to get Youtube API Key](https://stackoverflow.com/a/44399524)
 
+# TLDR: How to run and use?
+
+inside top level `main.py`, change the prompt to the keyword you are trying to serach
+then run:
+
+```bash
+python main.py
+```
+
 # Project Arch
 
 The entire project has two major parts:
@@ -34,3 +43,7 @@ This dir contains all you need to download any video based on a text entry descr
 ### Transcript and clip
 
 This dir contains all you need to process the transcripts and find the best matching contents and corp it automatically for you to use. By default, the same instruction for video search step will be shared here as instruction to find the best match, but you can manually change it as well. In here we index all the documents, send it to the weaviate docker instance, and query it to do hybrid search to find the best matching snippets of videos. Lastly, we crop them and store on the top level, so you can directly use it in your video.
+
+# Outputs:
+
+Located on the top level, under output_clips
