@@ -135,7 +135,7 @@ def automate_snippet_generation(
     )
     create_schema_if_not_exists(client, schema)
     index_video_transcripts(client, base_path)
-    best_transcripts = find_best_k_contents(search_query, k, client)
+    best_transcripts = find_best_k_contents(client, search_query, k, client)
     print(f"Best transcripts: {best_transcripts}")
 
     output_folder = "./output_clips"
