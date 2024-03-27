@@ -134,7 +134,7 @@ def automate_snippet_generation(
         additional_headers={"X-OpenAI-Api-Key": openai.api_key},
     )
     create_schema_if_not_exists(client, schema)
-    index_video_transcripts(base_path)
+    index_video_transcripts(client, base_path)
     best_transcripts = find_best_k_contents(search_query, k, client)
     print(f"Best transcripts: {best_transcripts}")
 
