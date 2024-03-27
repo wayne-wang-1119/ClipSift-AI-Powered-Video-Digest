@@ -27,6 +27,12 @@ then run:
 python main.py
 ```
 
+to remove duplicate in the database:
+
+```bash
+python .\transcript_based_auto_clip\db_delete_duplicate.py
+```
+
 # Project Arch
 
 The entire project has two major parts:
@@ -47,3 +53,7 @@ This dir contains all you need to process the transcripts and find the best matc
 # Outputs:
 
 Located on the top level, under output_clips
+
+```
+
+```
