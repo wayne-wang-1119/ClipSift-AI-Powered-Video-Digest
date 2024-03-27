@@ -4,6 +4,7 @@ import openai
 import weaviate
 import json
 import subprocess
+from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
 
 load_dotenv()
 
@@ -28,6 +29,26 @@ with open("transcript_based_auto_clip/data_schema/schema.json", "r") as schema_f
     schema = json.load(schema_file)
 
 
+def check_video_id_exists(client, video_id):
+    """
+    Checks if a videoId already exists in the Weaviate database.
+
+    Args:
+        video_id (str): The video ID to check.
+
+    Returns:
+        bool: True if the videoId exists, False otherwise.
+    """
+    # Example pseudo-method for querying Weaviate, adjust according to actual API
+    query_result = client.data_object.query(
+        "TranscriptSegment",
+        "videoId",
+        where={"path": "videoId", "operator": "Equal", "value": video_id},
+    )
+
+    return len(query_result) > 0
+
+
 def index_video_transcripts(
     client, base_path="transcript_based_auto_clip/youtube_downloads"
 ):
@@ -44,8 +65,8 @@ def index_video_transcripts(
         video_path = os.path.join(base_path, video_id)
         if os.path.isdir(video_path):
             transcript_path = os.path.join(video_path, f"{video_id}_transcript.json")
-
-            if os.path.exists(transcript_path):
+            exists = check_video_id_exists(client, video_id)
+            if not exists and os.path.exists(transcript_path):
                 with open(transcript_path, "r") as file:
                     transcript_data = json.load(file)
 
@@ -79,27 +100,31 @@ def find_best_k_contents(client, search_query, k):
             - end (float): The end time of the content.
             - text (str): The text of the content.
     """
-    results = (
-        client.query.get("TranscriptSegment", ["videoId", "text", "start", "duration"])
-        .with_near_text({"concepts": [search_query]})
-        .with_limit(k)
-        .do()
-    )
-    print(results)
-
-    best_transcripts = []
-    for result in results["data"]["Get"]["TranscriptSegment"]:
-        best_transcripts.append(
-            {
-                "videoId": result["videoId"],
-                "start": result["start"],
-                "duration": result["duration"],
-                "end": result["start"] + result["duration"],
-                "text": result["text"],
-            }
+    try:
+        results = (
+            client.query.get(
+                "TranscriptSegment", ["videoId", "text", "start", "duration"]
+            )
+            .with_near_text({"concepts": [search_query]})
+            .with_limit(k)
+            .do()
         )
 
-    return best_transcripts
+        # Debugging: Print raw results
+        print(f"Raw query results: {results}")
+
+        # Extract the best transcripts from results
+        best_transcripts = (
+            results.get("data", {}).get("Get", {}).get("TranscriptSegment", [])
+        )
+
+        # Debugging: Confirm the number of results
+        print(f"Number of best transcripts found: {len(best_transcripts)}")
+
+        return best_transcripts
+    except Exception as e:
+        print(f"Error querying Weaviate: {e}")
+        return []
 
 
 def automate_snippet_generation(
@@ -144,33 +169,19 @@ def automate_snippet_generation(
     )  # Create the output directory if it doesn't exist
 
     for transcript in best_transcripts:
-        # Extract the snippet from the video
-        print(f"Generating snippet for {transcript['videoId']}")
         video_id = transcript["videoId"]
-        start_time = transcript["start"]
-        end_time = transcript["end"]
-        video_path = os.path.join(base_path, video_id, f"{video_id}.mp4")
-        output_path = os.path.join(
+        start_time = int(transcript["start"])  # Ensure start_time is an integer
+        end_time = int(
+            transcript["start"] + transcript["duration"]
+        )  # Ensure end_time is an integer
+        file_name = os.path.join(base_path, video_id, f"{video_id}.mp4")
+        out_file = os.path.join(
             output_folder, f"{video_id}_{start_time}_{end_time}.mp4"
         )
 
-        # Construct the FFmpeg command
-        ffmpeg_command = [
-            "ffmpeg",
-            "-i",
-            video_path,
-            "-ss",
-            str(start_time),
-            "-to",
-            str(end_time),
-            "-c",
-            "copy",
-            output_path,
-        ]
-
-        # Execute the FFmpeg command
+        # Use moviepy to extract the clip
         try:
-            subprocess.run(ffmpeg_command, check=True)
-            print(f"Generated snippet: {output_path}")
-        except subprocess.CalledProcessError as e:
+            ffmpeg_extract_subclip(file_name, start_time, end_time, targetname=out_file)
+            print(f"Generated snippet: {out_file}")
+        except Exception as e:
             print(f"Failed to generate snippet for {video_id}: {e}")
