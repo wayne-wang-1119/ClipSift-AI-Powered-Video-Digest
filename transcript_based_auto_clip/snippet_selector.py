@@ -10,10 +10,6 @@ load_dotenv()
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-client = weaviate.Client(
-    url="http://localhost:8080", additional_headers={"X-OpenAI-Api-Key": openai.api_key}
-)
-
 
 def create_schema_if_not_exists(client, schema):
     existing_classes = client.schema.get()["classes"]
@@ -22,20 +18,19 @@ def create_schema_if_not_exists(client, schema):
     for cls in schema["classes"]:
         class_name = cls["class"]
         if class_name in existing_class_names:
-            print(f"Class '{class_name}' already exists, deleting.")
-            print(f"Deleting existing class '{class_name}'.")
-            client.schema.delete_class(class_name)
-        client.schema.create_class(cls)
-        print(f"Class '{class_name}' created.")
+            print(f"Class '{class_name}' already exists, skipping creation.")
+        else:
+            client.schema.create_class(cls)
+            print(f"Class '{class_name}' created.")
 
 
 with open("transcript_based_auto_clip/data_schema/schema.json", "r") as schema_file:
     schema = json.load(schema_file)
 
-create_schema_if_not_exists(client, schema)
 
-
-def index_video_transcripts(base_path="transcript_based_auto_clip/youtube_downloads"):
+def index_video_transcripts(
+    client, base_path="transcript_based_auto_clip/youtube_downloads"
+):
     """
     Indexes video transcripts by creating data objects for each segment and adding them to Weaviate.
 
@@ -67,7 +62,7 @@ def index_video_transcripts(base_path="transcript_based_auto_clip/youtube_downlo
                         client.data_object.create(data_object, "TranscriptSegment")
 
 
-def find_best_k_contents(search_query, k, client):
+def find_best_k_contents(client, search_query, k):
     """
     Find the best k contents based on a search query using the OpenAI client.
 
@@ -90,6 +85,7 @@ def find_best_k_contents(search_query, k, client):
         .with_limit(k)
         .do()
     )
+    print(results)
 
     best_transcripts = []
     for result in results["data"]["Get"]["TranscriptSegment"]:
@@ -133,9 +129,14 @@ def automate_snippet_generation(
         automate_snippet_generation("AI", 5)
     """
 
-    client = weaviate.Client("http://localhost:8080")
+    client = weaviate.Client(
+        url="http://localhost:8080",
+        additional_headers={"X-OpenAI-Api-Key": openai.api_key},
+    )
+    create_schema_if_not_exists(client, schema)
     index_video_transcripts(base_path)
     best_transcripts = find_best_k_contents(search_query, k, client)
+    print(f"Best transcripts: {best_transcripts}")
 
     output_folder = "./output_clips"
     os.makedirs(
@@ -143,6 +144,8 @@ def automate_snippet_generation(
     )  # Create the output directory if it doesn't exist
 
     for transcript in best_transcripts:
+        # Extract the snippet from the video
+        print(f"Generating snippet for {transcript['videoId']}")
         video_id = transcript["videoId"]
         start_time = transcript["start"]
         end_time = transcript["end"]
@@ -169,8 +172,3 @@ def automate_snippet_generation(
             print(f"Generated snippet: {output_path}")
         except subprocess.CalledProcessError as e:
             print(f"Failed to generate snippet for {video_id}: {e}")
-
-
-if __name__ == "__main__":
-
-    automate_snippet_generation("Python programming basics", 5)

@@ -7,10 +7,12 @@ prompt = """
 """
 video_base_path = "transcript_based_auto_clip/youtube_downloads"
 
-keywords = ingest_prompt.generate_keywords(prompt, "text-davinci-003")
+keywords = ingest_prompt.generate_keywords(prompt, "gpt-3.5-turbo")
 print(keywords)
 
 video_urls = search_youtube_by_keyword.search_videos(keywords, 3)
 print(video_urls)
 
 video_transcriber.download_transcript(video_base_path)
+
+snippet_selector.automate_snippet_generation(search_query=keywords, k=3)
