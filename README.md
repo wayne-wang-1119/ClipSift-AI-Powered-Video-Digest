@@ -30,7 +30,13 @@ python main.py
 to remove duplicate in the database:
 
 ```bash
-python .\transcript_based_auto_clip\db_delete_duplicate.py
+python clean_duplicate_in_db.py
+```
+
+to remove downloaded assets under youtube_downloads
+
+```bash
+sh clean_downloaded_video.sh
 ```
 
 # Project Arch
@@ -53,3 +59,7 @@ This dir contains all you need to process the transcripts and find the best matc
 # Outputs:
 
 Located on the top level, under output_clips
+
+```
+
+```
