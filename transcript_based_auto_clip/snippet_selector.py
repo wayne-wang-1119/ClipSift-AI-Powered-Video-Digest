@@ -20,6 +20,15 @@ with open("transcript_based_auto_clip/data_schema/schema.json", "r") as schema_f
 
 
 def index_video_transcripts(base_path="transcript_based_auto_clip/youtube_downloads"):
+    """
+    Indexes video transcripts by creating data objects for each segment and adding them to Weaviate.
+
+    Args:
+        base_path (str): The base path where the video transcripts are located. Defaults to "transcript_based_auto_clip/youtube_downloads".
+
+    Returns:
+        None
+    """
     for video_id in os.listdir(base_path):
         video_path = os.path.join(base_path, video_id)
         if os.path.isdir(video_path):
@@ -42,7 +51,23 @@ def index_video_transcripts(base_path="transcript_based_auto_clip/youtube_downlo
                         client.data_object.create(data_object, "TranscriptSegment")
 
 
-def find_best_k_contents(search_query, k=2):
+def find_best_k_contents(search_query, k, client):
+    """
+    Find the best k contents based on a search query using the OpenAI client.
+
+    Parameters:
+        search_query (str): The search query to find the best k contents.
+        k (int): The number of best contents to retrieve.
+        client (OpenAI): The OpenAI client used to query the data.
+
+    Returns:
+        list: A list of dictionaries containing the best k contents. Each dictionary has the following keys:
+            - videoId (str): The ID of the video.
+            - start (float): The start time of the content.
+            - duration (float): The duration of the content.
+            - end (float): The end time of the content.
+            - text (str): The text of the content.
+    """
     results = (
         client.query.get("TranscriptSegment", ["videoId", "text", "start", "duration"])
         .with_near_text({"concepts": [search_query]})
@@ -68,6 +93,30 @@ def find_best_k_contents(search_query, k=2):
 def automate_snippet_generation(
     search_query, k, base_path="transcript_based_auto_clip/youtube_downloads"
 ):
+    """
+    Generates snippets of videos based on a search query and saves them to the output folder.
+
+    Args:
+        search_query (str): The search query to find the best k contents.
+        k (int): The number of contents to retrieve.
+        base_path (str, optional): The base path of the YouTube downloads. Defaults to "transcript_based_auto_clip/youtube_downloads".
+
+    Returns:
+        None
+
+    Raises:
+        subprocess.CalledProcessError: If there is an error executing the FFmpeg command.
+
+    Note:
+        - This function requires the Weaviate client to be running on http://localhost:8080.
+        - The function indexes the video transcripts before finding the best k contents.
+        - The output folder "./output_clips" will be created if it doesn't exist.
+        - The function uses FFmpeg to extract the snippets from the videos.
+
+    Example:
+        automate_snippet_generation("AI", 5)
+    """
+
     client = weaviate.Client("http://localhost:8080")
     index_video_transcripts(base_path)
     best_transcripts = find_best_k_contents(search_query, k, client)
