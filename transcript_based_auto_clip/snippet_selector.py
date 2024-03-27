@@ -59,7 +59,7 @@ def index_video_transcripts(
         if os.path.isdir(video_path):
             transcript_path = os.path.join(video_path, f"{video_id}_transcript.json")
             exists = check_video_id_exists(client, video_id)
-            if not exists and os.path.exists(transcript_path):
+            if os.path.exists(transcript_path):
                 with open(transcript_path, "r") as file:
                     transcript_data = json.load(file)
 
