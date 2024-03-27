@@ -50,13 +50,20 @@ def find_best_k_contents(search_query, k=2):
                 "operator": "LessThan",
                 "operands": [
                     {"path": ["duration"]},
-                    {
-                        "valueFloat": 300
-                    },  # Looking for segments less than 300 seconds (5 minutes)
+                    {"valueFloat": 10},  # Looking for segments less than 10 seconds
                 ],
             }
         )
         .do()
     )
 
-    return results["data"]["Get"]["TranscriptSegment"]
+    return results["data"]["Get"]["TranscriptSegment"][:k]
+
+
+def automate_snippet_generation(search_query, k, base_path="./youtube_downloads"):
+    index_video_transcripts(base_path)
+    best_transcripts = find_best_k_contents(search_query, k)
+
+    for transcript in best_transcripts:
+        ffmpeg -i path/to/original/video.mp4 -ss [start time] -to [end time] -c copy output/path/segment.mp4
+

@@ -35,7 +35,8 @@ def download_videos(video_urls):
             .first()
         )
         stream.download(
-            output_path=f"transcript_based_auto_clip/youtube_downloads/{id}"
+            filename=f"{id}.mp4",
+            output_path=f"transcript_based_auto_clip/youtube_downloads/{id}",
         )
         print(f"Downloaded {id}")
 
