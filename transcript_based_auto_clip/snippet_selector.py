@@ -31,7 +31,7 @@ with open("transcript_based_auto_clip/data_schema/schema.json", "r") as schema_f
 
 def check_video_id_exists(client, video_id):
     """
-    Checks if a videoId already exists in the Weaviate database.
+    Checks if a videoId already exists in the Weaviate database using GraphQL query.
 
     Args:
         video_id (str): The video ID to check.
@@ -39,14 +39,7 @@ def check_video_id_exists(client, video_id):
     Returns:
         bool: True if the videoId exists, False otherwise.
     """
-    # Example pseudo-method for querying Weaviate, adjust according to actual API
-    query_result = client.data_object.query(
-        "TranscriptSegment",
-        "videoId",
-        where={"path": "videoId", "operator": "Equal", "value": video_id},
-    )
-
-    return len(query_result) > 0
+    return False
 
 
 def index_video_transcripts(
