@@ -3,9 +3,7 @@ from transcript_based_auto_clip import snippet_selector, video_transcriber
 
 video_to_include = 10
 
-prompt = """
-    What is a Linked List? How is it implemented in Python?
-"""
+prompt = """What is Donald Trump's opinion on the election? How can I make some funny videos about him?"""
 video_base_path = "transcript_based_auto_clip/youtube_downloads"
 
 keywords = ingest_prompt.generate_keywords(prompt, "gpt-3.5-turbo")
