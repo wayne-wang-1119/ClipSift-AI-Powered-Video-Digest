@@ -39,9 +39,3 @@ def download_videos(video_urls):
             output_path=f"transcript_based_auto_clip/youtube_downloads/{id}",
         )
         print(f"Downloaded {id}")
-
-
-if __name__ == "__main__":
-    keywords = "Python lists"
-    video_urls = search_videos(keywords, 2)
-    download_videos(video_urls)
