@@ -30,13 +30,13 @@ python main.py
 to remove duplicate in the database:
 
 ```bash
-python clean_duplicate_in_db.py
+python scripts/clean_duplicate_in_db.py
 ```
 
 to remove downloaded assets under youtube_downloads
 
 ```bash
-sh clean_downloaded_video.sh
+sh scripts/clean_downloaded_video.sh
 ```
 
 # Project Arch
