@@ -59,7 +59,3 @@ This dir contains all you need to process the transcripts and find the best matc
 # Outputs:
 
 Located on the top level, under output_clips
-
-```
-
-```
