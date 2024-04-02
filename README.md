@@ -18,6 +18,14 @@ docker compose up -d
 Additionally, you need YOUTUBE_API_KEY. You can obtain one from Google's Cloud platform for free and create a project for free.
 You can follow the linked here to do so: [How to get Youtube API Key](https://stackoverflow.com/a/44399524)
 
+Put everything in your .env on the top level. 
+
+```bash
+#create a .env, and in .env
+OPENAI_API_KEY="sk..."
+YOUTUBE_API_KEY="..."
+```
+
 # TLDR: How to run and use?
 
 inside top level `main.py`, change the prompt to the keyword you are trying to serach
