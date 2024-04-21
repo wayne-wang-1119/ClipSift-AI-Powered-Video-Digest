@@ -11,7 +11,6 @@ To setup, you can follow: [Weaviate Starter's Guide](https://weaviate.io/develop
 Or, simply run the following in your terminal:
 
 ```bash
-export OPENAI_API_KEY="sk..."
 docker compose up -d
 ```
 
